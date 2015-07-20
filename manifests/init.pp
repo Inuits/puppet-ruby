@@ -14,21 +14,15 @@ class ruby (
     archlinux => '/opt/ruby1.8/bin',
   },
   $usecrappyhttpdmodule = 'no',
-  $version = '1.8'
+  $version = '1.8',
+  $managerepo    = false
+
 ) {
 
-  if $ruby::stages != 'yes' {
-    include ruby::repo
-    include ruby::packages
-    Class['ruby::repo'] -> Class['ruby::packages']
-  } else {
-      class { 'ruby::repo':
-          stage => 'repo',
-      }
-      class { 'ruby::packages':
-          stage => 'depends',
-      }
+    if $ruby::managerepo {
+      include ruby::repo
     }
+    include ruby::packages
 
     if $::operatingsystem == 'centos' {
       if $::operatingsystemrelease =~ /^5/ {
